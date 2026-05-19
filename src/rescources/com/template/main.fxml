@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.template.MainController">
+   <children>
+      <ImageView fitHeight="499.0" fitWidth="768.0" layoutX="-114.0" layoutY="-27.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@/Users/criper/IdeaProjects/Template/src/assets/background.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="499.0" layoutY="62.0" mnemonicParsing="false" text="Salvar" />
+      <TextField layoutX="328.0" layoutY="62.0" />
+      <Text layoutX="300.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ID" />
+      <TableView layoutX="41.0" layoutY="100.0" prefHeight="246.0" prefWidth="509.0">
+        <columns>
+          <TableColumn prefWidth="75.0" text="ID" />
+          <TableColumn prefWidth="75.0" text="Nome" />
+            <TableColumn prefWidth="75.0" text="Column X" />
+            <TableColumn prefWidth="75.0" text="Column Y" />
+            <TableColumn prefWidth="75.0" text="Column Z" />
+        </columns>
+      </TableView>
+   </children>
+</AnchorPane>
