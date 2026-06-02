@@ -1,0 +1,100 @@
+.root {
+    -fx-background-color: #121212;
+}
+
+.label-header {
+    -fx-text-fill: #f8f9fa;
+}
+
+.label {
+    -fx-text-fill: #e9ecef;
+}
+
+.text-field {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #333333;
+    -fx-prompt-text-fill: #6c757d;
+    -fx-text-fill: #ffffff;
+}
+
+.text-field:focused {
+    -fx-border-color: #0d6efd;
+}
+
+.button {
+    -fx-text-fill: #ffffff;
+}
+
+#btnSave { -fx-background-color: #2db371; }
+#btnSave:hover { -fx-background-color: #198754; }
+
+#btnUpdate { -fx-background-color: #fbc02d; -fx-text-fill: #000000; }
+#btnUpdate:hover { -fx-background-color: #f57f17; }
+
+#btnDelete { -fx-background-color: #e84a5f; }
+#btnDelete:hover { -fx-background-color: #dc3545; }
+
+#btnClear { -fx-background-color: #495057; }
+#btnClear:hover { -fx-background-color: #343a40; }
+
+.table-view {
+    -fx-border-color: #333333;
+    -fx-background-color: #1e1e1e;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #252525;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #f8f9fa;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #1e1e1e;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #e9ecef;
+    -fx-border-color: transparent; /* Remove bordas internas da célula */
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #2c2c2c;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #0d6efd;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-text-fill: #ffffff;
+}
+
+/* ComboBox dark theme styles */
+.combo-box {
+    -fx-background-color: #1e1e1e;
+    -fx-border-color: #333333;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: #252525;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #e9ecef;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #e9ecef;
+}
+
+.combo-box .list-cell:filled:hover {
+    -fx-background-color: #2c2c2c;
+}
+
+.combo-box .list-cell:filled:selected {
+    -fx-background-color: #0d6efd;
+    -fx-text-fill: #ffffff;
+}

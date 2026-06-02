@@ -6,6 +6,12 @@ public class ShopItemDTO {
     private String description;
     private String price;
 
+    public ShopItemDTO(String name, String description, String price) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+    }
+
     public ShopItemDTO(int id, String name, String description, String price) {
         this.id = id;
         this.name = name;
