@@ -4,174 +4,50 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
 import java.util.List;
 import java.util.Optional;
 
 public class MainController {
 
-    @FXML
-    private TextField txtId;
-    @FXML
-    private TextField txtName;
-    @FXML
-    private TextField txtDescription;
-    @FXML
-    private TextField txtPrice;
-    @FXML
-    private TextField txtSearch;
-    @FXML
-    private Button btnSave;
-    @FXML
-    private Button btnDelete;
-    @FXML
-    private Button btnClear;
-    @FXML
-    private TableView<ShopItemDTO> tableItems;
-    @FXML
-    private TableColumn<ShopItemDTO, Integer> colId;
-    @FXML
-    private TableColumn<ShopItemDTO, String> colName;
-    @FXML
-    private TableColumn<ShopItemDTO, String> colDescription;
-    @FXML
-    private TableColumn<ShopItemDTO, String> colPrice;
-    @FXML
-    private VBox mainVBox;
-    @FXML
-    private ProgressIndicator progressIndicator;
-    @FXML
-    private ComboBox<String> themeComboBox;
-    @FXML
-    private StackPane rootStackPane;
+    @FXML private TextField txtId;
+    @FXML private TextField txtName;
+    @FXML private TextField txtDescription;
+    @FXML private TextField txtPrice;
+    @FXML private TextField txtSearch;
+    @FXML private Button btnSave;
+    @FXML private Button btnDelete;
+    @FXML private Button btnClear;
+    @FXML private TableView<ShopItemDTO> tableItems;
+    @FXML private TableColumn<ShopItemDTO, Integer> colId;
+    @FXML private TableColumn<ShopItemDTO, String> colName;
+    @FXML private TableColumn<ShopItemDTO, String> colDescription;
+    @FXML private TableColumn<ShopItemDTO, String> colPrice;
 
-    private ShopItemDAO itemDAO = new ShopItemDAO();
-    private ObservableList<ShopItemDTO> masterData = FXCollections.observableArrayList();
+    private final ShopItemDAO itemDAO = new ShopItemDAO();
+    private final ObservableList<ShopItemDTO> masterData = FXCollections.observableArrayList();
 
-    public void setInitialData(List<ShopItemDTO> initialData) {
-        masterData.setAll(initialData);
-        progressIndicator.setVisible(false);
-        mainVBox.setDisable(false);
-        mainVBox.setOpacity(1.0);
-    }
-
-    @FXML
-    void onSave(ActionEvent event) {
-        try {
-            String name = txtName.getText();
-            String description = txtDescription.getText();
-            String priceStr = txtPrice.getText();
-
-            if (name == null || name.trim().isEmpty()) {
-                showError("O campo Nome é obrigatório.");
-                return;
-            }
-            if (priceStr == null || priceStr.trim().isEmpty()) {
-                showError("O campo Preço é obrigatório.");
-                return;
-            }
-            
-            priceStr = priceStr.replace(",", ".");
-            try {
-                Double.parseDouble(priceStr);
-            } catch (NumberFormatException e) {
-                showError("O Preço deve ser um valor numérico válido.");
-                return;
-            }
-
-            String idStr = txtId.getText();
-
-            if (idStr != null && !idStr.isEmpty()) {
-                int id = Integer.parseInt(idStr);
-                ShopItemDTO item = new ShopItemDTO(id, name, description, priceStr);
-                itemDAO.updateShopItem(item);
-            } else {
-                ShopItemDTO item = new ShopItemDTO(name, description, priceStr);
-                itemDAO.createShopItem(item);
-            }
-
-            onClear(null);
-            loadItems();
-
-        } catch(Exception e) {
-            showError("Ocorreu um erro ao salvar: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erro de Validação");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    @FXML
-    void onDelete(ActionEvent event) {
-        ShopItemDTO selectedItem = tableItems.getSelectionModel().getSelectedItem();
-        if (selectedItem != null) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirmação de Exclusão");
-            alert.setHeaderText("Tem certeza que deseja excluir este item?");
-            alert.setContentText("Item: " + selectedItem.getName());
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                try {
-                    itemDAO.deleteShopItem(selectedItem.getId());
-                    loadItems();
-                    onClear(null);
-                } catch (Exception e) {
-                    showError("Erro ao deletar: " + e.getMessage());
-                }
-            }
-        } else {
-             Alert alert = new Alert(Alert.AlertType.WARNING);
-             alert.setTitle("Nenhum item selecionado");
-             alert.setHeaderText(null);
-             alert.setContentText("Por favor, selecione um item na tabela para excluir.");
-             alert.showAndWait();
-        }
-    }
-
-    @FXML
-    void onClear(ActionEvent event) {
-        txtId.clear();
-        txtName.clear();
-        txtDescription.clear();
-        txtPrice.clear();
-        tableItems.getSelectionModel().clearSelection();
-        btnSave.setId("btnSave");
-        btnSave.setText("Salvar");
-    }
+    // css do tema escuro para aplicar nos dialogs
+    private static final String DARK_CSS = "/com/template/dark.css";
 
     @FXML
     public void initialize() {
-        mainVBox.setDisable(true);
-        mainVBox.setOpacity(0.5);
-        progressIndicator.setVisible(true);
-
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // formata preco como R$
         colPrice.setCellFactory(tc -> new TableCell<ShopItemDTO, String>() {
             @Override
             protected void updateItem(String price, boolean empty) {
@@ -183,27 +59,21 @@ public class MainController {
                         double val = Double.parseDouble(price.replace(",", "."));
                         setText(String.format("R$ %.2f", val));
                     } catch (NumberFormatException e) {
-                         setText(price);
+                        setText(price);
                     }
                 }
             }
         });
 
+        // filtro de busca em tempo real
         FilteredList<ShopItemDTO> filteredData = new FilteredList<>(masterData, p -> true);
-        txtSearch.textProperty().addListener((observable, oldValue, newValue) -> {
+        txtSearch.textProperty().addListener((obs, oldVal, newVal) -> {
             filteredData.setPredicate(item -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                if (item.getName().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; 
-                } else if (item.getDescription() != null && item.getDescription().toLowerCase().contains(lowerCaseFilter)) {
-                    return true; 
-                } else if (String.valueOf(item.getId()).contains(lowerCaseFilter)) {
-                     return true;
-                }
-                return false;
+                if (newVal == null || newVal.isEmpty()) return true;
+                String filter = newVal.toLowerCase();
+                return item.getName().toLowerCase().contains(filter)
+                    || (item.getDescription() != null && item.getDescription().toLowerCase().contains(filter))
+                    || String.valueOf(item.getId()).contains(filter);
             });
         });
 
@@ -211,72 +81,111 @@ public class MainController {
         sortedData.comparatorProperty().bind(tableItems.comparatorProperty());
         tableItems.setItems(sortedData);
 
-        tableItems.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
-            if (newSelection != null) {
-                txtId.setText(String.valueOf(newSelection.getId()));
-                txtName.setText(newSelection.getName());
-                txtDescription.setText(newSelection.getDescription());
-                txtPrice.setText(newSelection.getPrice());
+        // selecao preenche o formulario para edicao
+        tableItems.getSelectionModel().selectedItemProperty().addListener((obs, old, selected) -> {
+            if (selected != null) {
+                txtId.setText(String.valueOf(selected.getId()));
+                txtName.setText(selected.getName());
+                txtDescription.setText(selected.getDescription());
+                txtPrice.setText(selected.getPrice());
                 btnSave.setText("Atualizar");
                 btnSave.setId("btnUpdate");
             }
         });
 
-        themeComboBox.getItems().addAll("Claro", "Escuro");
-        themeComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldTheme, newTheme) -> {
-            if (newTheme != null) {
-                applyTheme(newTheme);
-            }
-        });
+        loadItems();
     }
 
-    // Novo método para configurações que dependem da Scene estar disponível
-    public void postInitialize() {
-        themeComboBox.getSelectionModel().select("Claro");
-        applyTheme("Claro");
-    }
+    @FXML
+    void onSave(ActionEvent event) {
+        String name     = txtName.getText().trim();
+        String desc     = txtDescription.getText().trim();
+        String priceStr = txtPrice.getText().trim().replace(",", ".");
 
-    private void applyTheme(String themeName) {
-        if (rootStackPane.getScene() == null) {
-            System.err.println("Erro: Scene é nula ao tentar aplicar o tema.");
+        if (name.isEmpty())    { showAlert(Alert.AlertType.ERROR, "nome e obrigatorio");  return; }
+        if (priceStr.isEmpty()) { showAlert(Alert.AlertType.ERROR, "preco e obrigatorio"); return; }
+
+        try {
+            Double.parseDouble(priceStr);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "preco invalido - use ponto ou virgula como separador decimal");
             return;
         }
-        ObservableList<String> stylesheets = rootStackPane.getScene().getStylesheets();
-        stylesheets.clear();
-        stylesheets.add(getClass().getResource("/com/template/base.css").toExternalForm());
-        if ("Claro".equals(themeName)) {
-            stylesheets.add(getClass().getResource("/com/template/light.css").toExternalForm());
-        } else if ("Escuro".equals(themeName)) {
-            stylesheets.add(getClass().getResource("/com/template/dark.css").toExternalForm());
+
+        try {
+            String idStr = txtId.getText().trim();
+            if (!idStr.isEmpty()) {
+                itemDAO.updateShopItem(new ShopItemDTO(Integer.parseInt(idStr), name, desc, priceStr));
+            } else {
+                itemDAO.createShopItem(new ShopItemDTO(name, desc, priceStr));
+            }
+            onClear(null);
+            loadItems();
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "erro ao salvar: " + e.getMessage());
         }
+    }
+
+    @FXML
+    void onDelete(ActionEvent event) {
+        ShopItemDTO selected = tableItems.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert(Alert.AlertType.WARNING, "selecione um item na tabela para excluir");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("confirmar exclusao");
+        confirm.setHeaderText(null);
+        confirm.setContentText("excluir \"" + selected.getName() + "\"?");
+        applyDarkTheme(confirm);
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            try {
+                itemDAO.deleteShopItem(selected.getId());
+                onClear(null);
+                loadItems();
+            } catch (Exception e) {
+                showAlert(Alert.AlertType.ERROR, "erro ao excluir: " + e.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    void onClear(ActionEvent event) {
+        txtId.clear();
+        txtName.clear();
+        txtDescription.clear();
+        txtPrice.clear();
+        txtSearch.clear();
+        tableItems.getSelectionModel().clearSelection();
+        btnSave.setText("Salvar");
+        btnSave.setId("btnSave");
     }
 
     private void loadItems() {
-        progressIndicator.setVisible(true);
-        mainVBox.setDisable(true);
-        mainVBox.setOpacity(0.5);
+        try {
+            List<ShopItemDTO> items = itemDAO.getAllShopItems();
+            masterData.setAll(items);
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "erro ao carregar dados: " + e.getMessage());
+        }
+    }
 
-        Task<List<ShopItemDTO>> task = new Task<List<ShopItemDTO>>() {
-            @Override
-            protected List<ShopItemDTO> call() throws Exception {
-                return itemDAO.getAllShopItems();
-            }
-        };
+    // cria alert com tema escuro aplicado
+    private void showAlert(Alert.AlertType type, String msg) {
+        Alert alert = new Alert(type);
+        alert.setTitle(type == Alert.AlertType.WARNING ? "aviso" : "erro");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        applyDarkTheme(alert);
+        alert.showAndWait();
+    }
 
-        task.setOnSucceeded(e -> {
-            masterData.setAll(task.getValue());
-            progressIndicator.setVisible(false);
-            mainVBox.setDisable(false);
-            mainVBox.setOpacity(1.0);
-        });
-
-        task.setOnFailed(e -> {
-            showError("Falha ao recarregar dados do banco.");
-            progressIndicator.setVisible(false);
-            mainVBox.setDisable(false);
-            mainVBox.setOpacity(1.0);
-        });
-
-        new Thread(task).start();
+    // aplica o css escuro no dialog (dialogs nao herdam o css da cena principal)
+    private void applyDarkTheme(Alert alert) {
+        String css = getClass().getResource(DARK_CSS).toExternalForm();
+        alert.getDialogPane().getStylesheets().add(css);
     }
 }

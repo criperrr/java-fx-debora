@@ -10,19 +10,18 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/template/loading.fxml"));
-        Parent root = fxmlLoader.load();
-        
-        LoadingController controller = fxmlLoader.getController();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/template/main.fxml"));
+        Parent root = loader.load();
 
-        stage.setTitle("Carregando...");
-        stage.setScene(new Scene(root));
+        Scene scene = new Scene(root, 850, 650);
+        scene.getStylesheets().add(getClass().getResource("/com/template/dark.css").toExternalForm());
+
+        stage.setTitle("Gerenciador de Itens");
+        stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-
-        controller.startLoading(stage);
     }
-    
+
     public static void main(String[] args) {
         launch(args);
     }
