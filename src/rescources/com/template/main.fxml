@@ -41,12 +41,11 @@
                     </rowConstraints>
                     <children>
                         <Label text="ID:" />
-                        <Label text="Nome:" GridPane.rowIndex="1" />
+                        <Label text="Nome: *" styleClass="label-required" GridPane.rowIndex="1" />
                         <Label text="Descricao:" GridPane.rowIndex="2" />
-                        <Label text="Preco (R$):" GridPane.rowIndex="3" />
+                        <Label text="Preco (R$): *" styleClass="label-required" GridPane.rowIndex="3" />
 
-                        <TextField fx:id="txtId" editable="false" promptText="gerado automaticamente"
-                                   GridPane.columnIndex="1" />
+                        <Label fx:id="txtId" text="selecione um item!" GridPane.columnIndex="1" styleClass="label-id" />
                         <TextField fx:id="txtName" promptText="nome do produto"
                                    GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <TextField fx:id="txtDescription" promptText="descricao"

@@ -16,6 +16,21 @@
     -fx-text-fill: #e9ecef;
 }
 
+.label-required {
+    -fx-text-fill: #ff9999;
+    -fx-font-weight: bold;
+}
+
+.label-id {
+    -fx-text-fill: #f8f9fa;
+    -fx-font-weight: normal;
+    -fx-padding: 5 10;
+    -fx-background-color: #252525;
+    -fx-border-color: #333333;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
 /* --- inputs --- */
 .text-field {
     -fx-background-color: #1e1e1e;
