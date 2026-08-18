@@ -1,4 +1,6 @@
-package com.template;
+package com.template.validation;
+
+import com.template.util.FormatUtil;
 
 public class ShopItemValidator {
 

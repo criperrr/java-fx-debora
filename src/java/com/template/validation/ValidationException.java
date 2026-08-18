@@ -1,4 +1,4 @@
-package com.template;
+package com.template.validation;
 
 public class ValidationException extends RuntimeException {
     public ValidationException(String message) {

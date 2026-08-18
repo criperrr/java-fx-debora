@@ -1,4 +1,4 @@
-package com.template;
+package com.template.model.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,8 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.template.DatabaseConnection;
-import com.template.ShopItemDTO;
+import com.template.model.dto.ShopItemDTO;
 
 public class ShopItemDAO {
 

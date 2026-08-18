@@ -1,6 +1,11 @@
-package com.template;
+package com.template.service;
 
 import java.util.List;
+
+import com.template.model.dao.ShopItemDAO;
+import com.template.model.dto.ShopItemDTO;
+import com.template.util.FormatUtil;
+import com.template.validation.ShopItemValidator;
 
 public class ShopItemService {
 

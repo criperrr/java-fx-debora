@@ -1,4 +1,4 @@
-package com.template;
+package com.template.model.dao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

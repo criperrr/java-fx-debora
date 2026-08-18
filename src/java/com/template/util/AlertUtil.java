@@ -1,4 +1,4 @@
-package com.template;
+package com.template.util;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;

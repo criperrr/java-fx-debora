@@ -1,4 +1,4 @@
-package com.template;
+package com.template.controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,8 +13,22 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import com.template.model.dto.ShopItemDTO;
+import com.template.service.ShopItemService;
+import com.template.util.AlertUtil;
+import com.template.util.FormatUtil;
+import com.template.validation.ValidationException;
+
+/**
+ * Controller: focado exclusivamente no gerenciamento da View e interação com o usuário (UI/Eventos).
+ * Service (ShopItemService): orquestração das regras de negócio e operações de CRUD.
+ * Validator (ShopItemValidator): validações de integridade e dados de entrada.
+ * Util (FormatUtil, AlertUtil): formatações de valores e exibição padronizada de diálogos/alertas.
+ * DAO (ShopItemDAO): persistência e comunicação direta com o banco de dados.
+ */
 public class MainController {
 
+    // Componentes visuais gerenciados pelo Controller (responsabilidade da View/UI)
     @FXML private TextField txtId;
     @FXML private TextField txtName;
     @FXML private TextField txtDescription;
@@ -29,6 +43,7 @@ public class MainController {
     @FXML private TableColumn<ShopItemDTO, String> colDescription;
     @FXML private TableColumn<ShopItemDTO, String> colPrice;
 
+    // Regras de negócio e persistência delegadas para a camada de serviço
     private final ShopItemService itemService;
     private final ObservableList<ShopItemDTO> masterData = FXCollections.observableArrayList();
 
@@ -54,6 +69,7 @@ public class MainController {
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
+        // Responsabilidade de formatação de exibição de moeda: movida/delegada para FormatUtil
         colPrice.setCellFactory(tc -> new TableCell<ShopItemDTO, String>() {
             @Override
             protected void updateItem(String price, boolean empty) {
@@ -108,6 +124,7 @@ public class MainController {
     @FXML
     void onSave(ActionEvent event) {
         try {
+            // Responsabilidade de negócio, validação e persistência: movido/delegado para ShopItemService
             itemService.saveItem(
                 txtId.getText(),
                 txtName.getText(),
@@ -117,6 +134,8 @@ public class MainController {
             onClear(null);
             loadItems();
         } catch (ValidationException e) {
+            // Responsabilidade de validação: tratada no ShopItemValidator e capturada aqui
+            // Responsabilidade de exibição de alertas visuais: movido/delegado para AlertUtil
             AlertUtil.showError(e.getMessage());
         } catch (Exception e) {
             AlertUtil.showError("erro ao salvar: " + e.getMessage());
@@ -127,28 +146,31 @@ public class MainController {
     void onDelete(ActionEvent event) {
         ShopItemDTO selected = tableItems.getSelectionModel().getSelectedItem();
         if (selected == null) {
+            // Responsabilidade de alerta de aviso: movido/delegado para AlertUtil
             AlertUtil.showWarning("selecione um item na tabela para excluir");
-            return;
-        }
+        } else {
+            // Responsabilidade de diálogo modal de confirmação: movido/delegado para AlertUtil
+            boolean confirmed = AlertUtil.showConfirmation(
+                "confirmar exclusao",
+                "excluir \"" + selected.getName() + "\"?"
+            );
 
-        boolean confirmed = AlertUtil.showConfirmation(
-            "confirmar exclusao",
-            "excluir \"" + selected.getName() + "\"?"
-        );
-
-        if (confirmed) {
-            try {
-                itemService.deleteItem(selected.getId());
-                onClear(null);
-                loadItems();
-            } catch (Exception e) {
-                AlertUtil.showError("erro ao excluir: " + e.getMessage());
+            if (confirmed) {
+                try {
+                    // Responsabilidade de exclusão e acesso a dados: movido/delegado para ShopItemService
+                    itemService.deleteItem(selected.getId());
+                    onClear(null);
+                    loadItems();
+                } catch (Exception e) {
+                    AlertUtil.showError("erro ao excluir: " + e.getMessage());
+                }
             }
         }
     }
 
     @FXML
     void onClear(ActionEvent event) {
+        // Responsabilidade da View: limpar os campos do formulário e resetar estado visual
         txtId.clear();
         txtName.clear();
         txtDescription.clear();
@@ -161,6 +183,7 @@ public class MainController {
 
     private void loadItems() {
         try {
+            // Responsabilidade de busca de dados: delegada para ShopItemService
             masterData.setAll(itemService.getAllItems());
         } catch (Exception e) {
             AlertUtil.showError("erro ao carregar dados: " + e.getMessage());

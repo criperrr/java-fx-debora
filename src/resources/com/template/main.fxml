@@ -16,7 +16,7 @@
 <AnchorPane prefHeight="650.0" prefWidth="850.0"
             xmlns="http://javafx.com/javafx/26"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.template.MainController">
+            fx:controller="com.template.controller.MainController">
     <children>
         <VBox spacing="20.0"
               AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
