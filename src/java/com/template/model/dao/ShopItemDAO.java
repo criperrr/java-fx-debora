@@ -9,8 +9,16 @@ import java.util.List;
 
 import com.template.model.dto.ShopItemDTO;
 
+/**
+ * Objeto de acesso a dados (DAO) para operações de persistência da entidade ShopItem.
+ */
 public class ShopItemDAO {
 
+    /**
+     * Insere um novo item na base de dados.
+     *
+     * @param item Dados do item a ser cadastrado.
+     */
     public void createShopItem(ShopItemDTO item) {
         String sql = "INSERT INTO shopItems (name, description, price) VALUES (?, ?, ?)";
         
@@ -28,6 +36,12 @@ public class ShopItemDAO {
         }
     }
 
+    /**
+     * Busca um item específico pelo seu ID.
+     *
+     * @param id Identificador do item.
+     * @return ShopItemDTO correspondente ou null caso não encontrado.
+     */
     public ShopItemDTO getShopItem(int id) {
         String sql = "SELECT id, name, description, price FROM shopItems WHERE id = ?";
         ShopItemDTO item = null;
@@ -55,6 +69,11 @@ public class ShopItemDAO {
         return item;
     }
 
+    /**
+     * Lista todos os itens cadastrados na tabela.
+     *
+     * @return Lista contendo os itens cadastrados.
+     */
     public List<ShopItemDTO> getAllShopItems() {
         String sql = "SELECT id, name, description, price FROM shopItems";
         List<ShopItemDTO> items = new ArrayList<>();
@@ -80,6 +99,11 @@ public class ShopItemDAO {
         return items;
     }
 
+    /**
+     * Atualiza os dados de um item existente.
+     *
+     * @param item Item com os novos dados a serem salvos.
+     */
     public void updateShopItem(ShopItemDTO item) {
         String sql = "UPDATE shopItems SET name = ?, description = ?, price = ? WHERE id = ?";
         
@@ -98,6 +122,11 @@ public class ShopItemDAO {
         }
     }
 
+    /**
+     * Exclui um item da base de dados pelo seu identificador.
+     *
+     * @param id ID do item a ser excluído.
+     */
     public void deleteShopItem(int id) {
         String sql = "DELETE FROM shopItems WHERE id = ?";
         

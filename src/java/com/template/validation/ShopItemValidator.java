@@ -1,25 +1,54 @@
 package com.template.validation;
 
-import com.template.util.FormatUtil;
+import com.template.model.dto.ShopItemDTO;
 
-public class ShopItemValidator {
+/**
+ * Validador para a entidade ShopItemDTO, orquestrando as validações de nome e preço.
+ */
+public class ShopItemValidator implements Validator<ShopItemDTO> {
 
-    private ShopItemValidator() {}
+    private static final ShopItemValidator DEFAULT_INSTANCE = new ShopItemValidator();
 
-    public static void validate(String name, String priceStr) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new ValidationException("nome e obrigatorio");
+    private final Validator<String> nameValidator;
+    private final Validator<String> priceValidator;
+
+    public ShopItemValidator() {
+        this(new RequiredFieldValidator("nome"), new PriceValidator());
+    }
+
+    public ShopItemValidator(Validator<String> nameValidator, Validator<String> priceValidator) {
+        this.nameValidator = nameValidator;
+        this.priceValidator = priceValidator;
+    }
+
+    @Override
+    public void validate(ShopItemDTO item) throws ValidationException {
+        if (item == null) {
+            throw new ValidationException("item nao pode ser nulo");
         }
-        if (priceStr == null || priceStr.trim().isEmpty()) {
-            throw new ValidationException("preco e obrigatorio");
-        }
-        try {
-            double price = Double.parseDouble(FormatUtil.normalizePrice(priceStr));
-            if (price < 0) {
-                throw new ValidationException("preco nao pode ser negativo");
-            }
-        } catch (NumberFormatException e) {
-            throw new ValidationException("preco invalido - use ponto ou virgula como separador decimal");
-        }
+        validate(item.getName(), item.getPrice());
+    }
+
+    /**
+     * Valida os campos individuais de um item da loja.
+     *
+     * @param name     Nome do item.
+     * @param priceStr Representação textual do preço.
+     * @throws ValidationException Caso algum dos campos seja inválido.
+     */
+    public void validate(String name, String priceStr) throws ValidationException {
+        nameValidator.validate(name);
+        priceValidator.validate(priceStr);
+    }
+
+    /**
+     * Método utilitário estático para validação direta de campos.
+     *
+     * @param name     Nome do item.
+     * @param priceStr Representação textual do preço.
+     * @throws ValidationException Caso algum dos campos seja inválido.
+     */
+    public static void validateFields(String name, String priceStr) throws ValidationException {
+        DEFAULT_INSTANCE.validate(name, priceStr);
     }
 }

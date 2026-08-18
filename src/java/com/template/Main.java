@@ -6,6 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Classe principal responsável por inicializar a aplicação JavaFX.
+ */
 public class Main extends Application {
 
     @Override

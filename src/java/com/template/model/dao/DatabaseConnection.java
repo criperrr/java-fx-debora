@@ -11,7 +11,7 @@ public class DatabaseConnection {
     static String user = "postgres";
     static String password = "postgres";
 
-    // cria a tabela se nao existir
+    // Cria a tabela se nao existir
     static {
         try (Connection conn = DriverManager.getConnection(url, user, password);
              Statement stmt = conn.createStatement()) {
@@ -24,7 +24,7 @@ public class DatabaseConnection {
                 ")"
             );
         } catch (SQLException e) {
-            System.out.println("erro ao inicializar tabela: " + e.getMessage());
+            System.out.println("Erro ao inicializar tabela: " + e.getMessage());
         }
     }
 
@@ -32,7 +32,7 @@ public class DatabaseConnection {
         try {
             return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
-            throw new RuntimeException("falha na conexao: " + e.getMessage(), e);
+            throw new RuntimeException("Falha na conexao: " + e.getMessage(), e);
         }
     }
 }

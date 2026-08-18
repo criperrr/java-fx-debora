@@ -1,5 +1,8 @@
 package com.template.model.dto;
 
+/**
+ * Objeto de Transferência de Dados (DTO) representando um item da loja.
+ */
 public class ShopItemDTO {
     private int id;
     private String name;
