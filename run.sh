@@ -53,6 +53,7 @@ fi
 # Localiza JavaFX SDK
 JAVAFX_LIB=""
 POSSIBLE_FX_PATHS=(
+    "$LIB/javafx-sdk"
     "$LIB/javafx-sdk/lib"
     $(ls -d "$LIB"/javafx-sdk*/lib 2>/dev/null || true)
     $(ls -d "$HOME"/Documents/javafx-sdk*/lib 2>/dev/null || true)
