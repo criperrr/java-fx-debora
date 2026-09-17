@@ -63,6 +63,8 @@
                                         <children>
                                             <Button text="🔥 Chapa do Siri (Fritar!)" onAction="#onGrillBurger"
                                                     styleClass="retro-btn-grill" />
+                                            <Button text="💻 Desafios Dev SQL" onAction="#onOpenCodeChallenges"
+                                                    styleClass="retro-btn-header-action" />
                                             <Button text="⚡ Skills PostgreSQL" onAction="#onOpenSkills"
                                                     styleClass="retro-btn-header-action" />
                                             <Button text="🐟 Atender Clientes" onAction="#onOpenAssistantTerminal"
@@ -263,7 +265,7 @@
                             <children>
                                 <Label styleClass="status-bar-text" text="🌊 Conexão: Servidor Siri Cascudo v2.0 (PostgreSQL)" />
                                 <Label styleClass="status-bar-separator" text="|" />
-                                <Label styleClass="status-bar-text" text="🦀 Proprietário: Eugene H. Siriguejo" />
+                                <Label fx:id="lblDevRank" styleClass="status-bar-text" text="🎓 Cargo: Estagiário Lava-Pratos 🧼" />
                                 <Label styleClass="status-bar-separator" text="|" />
                                 <Label styleClass="status-bar-text" text="🍍 Bikini Bottom OS • GlassPane Ativo" HBox.hgrow="ALWAYS" />
                             </children>

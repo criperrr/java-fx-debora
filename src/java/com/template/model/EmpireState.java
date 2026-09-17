@@ -87,6 +87,33 @@ public class EmpireState {
         firewallPlankton = val;
     }
 
+    // Desafios de Engenharia & Programação Concluídos
+    private static final java.util.Set<String> completedChallenges = new java.util.HashSet<>();
+
+    public static boolean isChallengeCompleted(String id) {
+        return completedChallenges.contains(id);
+    }
+
+    public static void markChallengeCompleted(String id) {
+        completedChallenges.add(id);
+    }
+
+    public static int getCompletedChallengesCount() {
+        return completedChallenges.size();
+    }
+
+    public static String getDeveloperRank() {
+        int count = completedChallenges.size();
+        switch (count) {
+            case 0: return "Estagiário Lava-Pratos 🧼";
+            case 1: return "Júnior da Modelagem 📋";
+            case 2: return "Pleno da Fila & Triggers 🍍";
+            case 3: return "Sênior de Queries do Siriguejo 💰";
+            case 4: return "Tech Lead de Índices B-Tree ⚡";
+            default: return "Lendário DBA Chefe de Netuno 👑";
+        }
+    }
+
     public static void reset() {
         coins = 0;
         level = 1;
@@ -96,5 +123,6 @@ public class EmpireState {
         connectionPool = false;
         autoVacuum = false;
         firewallPlankton = false;
+        completedChallenges.clear();
     }
 }

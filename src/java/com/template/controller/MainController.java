@@ -38,6 +38,7 @@ import com.template.model.dto.ShopItemDTO;
 import com.template.service.ShopItemService;
 import com.template.util.AlertUtil;
 import com.template.util.AssistantTerminal;
+import com.template.util.CodeChallengeDialog;
 import com.template.util.FormatUtil;
 import com.template.util.SkillsDialog;
 import com.template.util.SoundManager;
@@ -73,6 +74,7 @@ public class MainController {
     @FXML private Label lblClock;
     @FXML private Label lblCoins;
     @FXML private Label lblCps;
+    @FXML private Label lblDevRank;
     @FXML private ImageView imgGary;
     @FXML private ImageView imgBob;
     @FXML private ImageView imgSquidward;
@@ -700,6 +702,12 @@ public class MainController {
     }
 
     @FXML
+    void onOpenCodeChallenges(ActionEvent event) {
+        Stage stage = (Stage) tableItems.getScene().getWindow();
+        CodeChallengeDialog.show(stage, this::updateHud);
+    }
+
+    @FXML
     void onOpenSkills(ActionEvent event) {
         Stage stage = (Stage) tableItems.getScene().getWindow();
         SkillsDialog.show(stage, this::updateHud);
@@ -816,6 +824,9 @@ public class MainController {
         }
         if (lblCps != null) {
             lblCps.setText("+" + passive + "/s");
+        }
+        if (lblDevRank != null) {
+            lblDevRank.setText("🎓 Cargo: " + EmpireState.getDeveloperRank());
         }
     }
 }
