@@ -39,25 +39,29 @@ public class ShopItemService {
     }
 
     /**
-     * Valida e salva ou atualiza um item na base de dados.
-     *
-     * @param idStr       ID do item (vazio ou nulo para novo cadastro).
-     * @param name        Nome do item.
-     * @param description Descrição do item.
-     * @param priceStr    Preço em formato de texto.
+     * Valida e salva ou atualiza um item na base de dados (formato padrão).
      */
     public void saveItem(String idStr, String name, String description, String priceStr) {
+        saveItem(idStr, name, "Siri Cascudo", description, "Comum", priceStr);
+    }
+
+    /**
+     * Valida e salva ou atualiza um item na base de dados (com categoria e raridade da Fenda).
+     */
+    public void saveItem(String idStr, String name, String category, String description, String rarity, String priceStr) {
         itemValidator.validate(name, priceStr);
 
         String normalizedPrice = FormatUtil.normalizePrice(priceStr);
         String trimmedName = name != null ? name.trim() : "";
+        String trimmedCategory = (category != null && !category.isBlank()) ? category.trim() : "Siri Cascudo";
         String trimmedDesc = description != null ? description.trim() : "";
+        String trimmedRarity = (rarity != null && !rarity.isBlank()) ? rarity.trim() : "Comum";
 
         if (idStr != null && !idStr.trim().isEmpty()) {
             int id = Integer.parseInt(idStr.trim());
-            itemDAO.updateShopItem(new ShopItemDTO(id, trimmedName, trimmedDesc, normalizedPrice));
+            itemDAO.updateShopItem(new ShopItemDTO(id, trimmedName, trimmedCategory, trimmedDesc, trimmedRarity, normalizedPrice));
         } else {
-            itemDAO.createShopItem(new ShopItemDTO(trimmedName, trimmedDesc, normalizedPrice));
+            itemDAO.createShopItem(new ShopItemDTO(trimmedName, trimmedCategory, trimmedDesc, trimmedRarity, normalizedPrice));
         }
     }
 

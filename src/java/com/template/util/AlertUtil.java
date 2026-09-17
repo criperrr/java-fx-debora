@@ -11,49 +11,53 @@ import java.util.Optional;
 public class AlertUtil {
 
     private static final String DARK_CSS = "/com/template/dark.css";
+    private static final String SPONGEBOB_CSS = "/com/template/spongebob/spongebob.css";
 
     private AlertUtil() {}
 
     /**
      * Exibe um alerta de erro.
-     *
-     * @param message Mensagem a ser exibida.
      */
     public static void showError(String message) {
+        if (ThemeContext.isBobEsponja()) {
+            SoundManager.play(SoundManager.FAIL);
+        }
         showAlert(Alert.AlertType.ERROR, "Erro", message);
     }
 
     /**
      * Exibe um alerta de aviso/alerta.
-     *
-     * @param message Mensagem de aviso.
      */
     public static void showWarning(String message) {
+        if (ThemeContext.isBobEsponja()) {
+            SoundManager.play(SoundManager.BOOWOMP);
+        }
         showAlert(Alert.AlertType.WARNING, "Aviso", message);
     }
 
     /**
      * Exibe uma caixa de informação.
-     *
-     * @param message Mensagem informativa.
      */
     public static void showInfo(String message) {
+        if (ThemeContext.isBobEsponja()) {
+            SoundManager.play(SoundManager.GARY_MEOW);
+        }
         showAlert(Alert.AlertType.INFORMATION, "Informação", message);
     }
 
     /**
      * Exibe uma caixa de diálogo de confirmação com opções OK e Cancelar.
-     *
-     * @param title   Título da janela.
-     * @param message Mensagem de confirmação.
-     * @return true se o usuário confirmou (clicou em OK), false caso contrário.
+     * Toca o som de tremor (shiver) quando no modo Bob Esponja.
      */
     public static boolean showConfirmation(String title, String message) {
+        if (ThemeContext.isBobEsponja()) {
+            SoundManager.play(SoundManager.SHIVER);
+        }
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle(title);
         confirm.setHeaderText(null);
         confirm.setContentText(message);
-        applyDarkTheme(confirm);
+        applyTheme(confirm);
 
         Optional<ButtonType> result = confirm.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
@@ -64,13 +68,14 @@ public class AlertUtil {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(msg);
-        applyDarkTheme(alert);
+        applyTheme(alert);
         alert.showAndWait();
     }
 
-    private static void applyDarkTheme(Alert alert) {
+    private static void applyTheme(Alert alert) {
         try {
-            String css = AlertUtil.class.getResource(DARK_CSS).toExternalForm();
+            String cssPath = ThemeContext.isBobEsponja() ? SPONGEBOB_CSS : DARK_CSS;
+            String css = AlertUtil.class.getResource(cssPath).toExternalForm();
             alert.getDialogPane().getStylesheets().add(css);
         } catch (Exception ignored) {
         }

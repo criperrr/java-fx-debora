@@ -1,0 +1,399 @@
+/* ============================================================
+   TEMA BOB ESPONJA - ANOS 2000 & RETRO DESIGN (BIKINI BOTTOM OS)
+   ============================================================ */
+
+.spongebob-root {
+    -fx-font-family: 'Comic Sans MS', 'Chalkboard', 'Trebuchet MS', 'Arial Rounded MT Bold', sans-serif;
+    -fx-background-image: url('images/fundo_ceu_da_fenda_do_biquine.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center center;
+    -fx-background-repeat: no-repeat;
+    -fx-font-size: 13px;
+}
+
+/* --- HEADER --- */
+.spongebob-header-box {
+    -fx-background-color: linear-gradient(to bottom, rgba(255, 241, 118, 0.95), rgba(251, 192, 45, 0.95));
+    -fx-border-color: #f57f17 #e65100 #e65100 #f57f17;
+    -fx-border-width: 3px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 6, 0, 0, 3);
+}
+
+.spongebob-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #b71c1c;
+    -fx-effect: dropshadow(one-pass-box, #ffffff, 2, 1.0, 1, 1);
+}
+
+.spongebob-subtitle {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0d47a1;
+}
+
+.bubble-badge {
+    -fx-background-color: rgba(255, 255, 255, 0.9);
+    -fx-border-color: #0288d1;
+    -fx-border-width: 2px;
+    -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
+    -fx-padding: 3 10 3 10;
+}
+
+.bubble-text {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #e65100;
+}
+
+.bubble-subtext {
+    -fx-font-size: 10px;
+    -fx-text-fill: #0288d1;
+    -fx-font-weight: bold;
+}
+
+/* --- BOTÕES DO HEADER (AÇÃO E EASTER EGGS) --- */
+.retro-btn-header-action {
+    -fx-background-color: linear-gradient(to bottom, #00e676, #00c853);
+    -fx-border-color: #b9f6ca #007e33 #007e33 #b9f6ca;
+    -fx-border-width: 2px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #003300;
+    -fx-padding: 3 8 3 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.3), 2, 0, 0, 1);
+}
+
+.retro-btn-header-action:hover {
+    -fx-background-color: linear-gradient(to bottom, #69f0ae, #00e676);
+}
+
+.retro-btn-header-easter {
+    -fx-background-color: linear-gradient(to bottom, #ff9100, #ff6d00);
+    -fx-border-color: #ffe0b2 #e65100 #e65100 #ffe0b2;
+    -fx-border-width: 2px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 3 8 3 8;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.3), 2, 0, 0, 1);
+}
+
+.retro-btn-header-easter:hover {
+    -fx-background-color: linear-gradient(to bottom, #ffa726, #fb8c00);
+}
+
+/* --- PERSONAGENS INTERATIVOS --- */
+.interactive-char {
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 4, 0, 0, 2);
+}
+
+/* --- PAINEIS DE PERSONAGEM (LULA MOLUSCO E PATRICIA) --- */
+.character-panel {
+    -fx-background-color: rgba(255, 253, 231, 0.92);
+    -fx-border-color: #ffffff #795548 #795548 #ffffff;
+    -fx-border-width: 3px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 6, 0, 0, 3);
+}
+
+.retro-badge-label {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #00695c;
+    -fx-background-color: #b2dfdb;
+    -fx-background-radius: 4px;
+    -fx-padding: 2 6 2 6;
+}
+
+.retro-badge-label-patricia {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #880e4f;
+    -fx-background-color: #f8bbd0;
+    -fx-background-radius: 4px;
+    -fx-padding: 2 6 2 6;
+}
+
+.speech-bubble {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #00897b;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+    -fx-text-fill: #37474f;
+    -fx-text-alignment: center;
+}
+
+.speech-bubble-pink {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #d81b60;
+    -fx-border-width: 2px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px;
+    -fx-font-size: 10px;
+    -fx-font-style: italic;
+    -fx-text-fill: #4a148c;
+    -fx-text-alignment: center;
+}
+
+/* --- FORMULÁRIO RETRO 2000s --- */
+.retro-window-panel {
+    -fx-background-color: rgba(255, 253, 231, 0.95);
+    -fx-border-color: #ffffff #5d4037 #5d4037 #ffffff;
+    -fx-border-width: 3px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 6, 0, 0, 2);
+}
+
+.panel-title-bar {
+    -fx-background-color: linear-gradient(to right, #0288d1, #29b6f6);
+    -fx-padding: 4 8 4 8;
+    -fx-border-radius: 3px;
+    -fx-background-radius: 3px;
+}
+
+.panel-title-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #3e2723;
+    -fx-font-size: 11px;
+}
+
+/* --- INPUTS & COMBOS --- */
+.retro-input {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #7f9db9 #ffffff #ffffff #7f9db9;
+    -fx-border-width: 2px;
+    -fx-border-radius: 2px;
+    -fx-background-radius: 2px;
+    -fx-text-fill: #000000;
+    -fx-font-size: 11px;
+    -fx-padding: 3 6 3 6;
+}
+
+.retro-input:focused {
+    -fx-border-color: #ff9800;
+    -fx-background-color: #fffde7;
+}
+
+.retro-input-readonly {
+    -fx-background-color: #eceff1;
+    -fx-text-fill: #546e7a;
+    -fx-font-weight: bold;
+}
+
+.retro-combo {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #7f9db9 #ffffff #ffffff #7f9db9;
+    -fx-border-width: 2px;
+    -fx-font-size: 11px;
+}
+
+.retro-search {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #0288d1 #ffffff #ffffff #0288d1;
+    -fx-border-width: 2px;
+    -fx-font-weight: bold;
+}
+
+/* --- BOTÕES CHANFRADOS 3D --- */
+.retro-btn {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-border-width: 3px;
+    -fx-padding: 5 10 5 10;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(one-pass-box, rgba(0, 0, 0, 0.3), 3, 0, 0, 1);
+}
+
+.retro-btn-save {
+    -fx-background-color: linear-gradient(to bottom, #4caf50, #2e7d32);
+    -fx-border-color: #81c784 #1b5e20 #1b5e20 #81c784;
+    -fx-text-fill: #ffffff;
+}
+
+.retro-btn-save:hover {
+    -fx-background-color: linear-gradient(to bottom, #66bb6a, #388e3c);
+}
+
+.retro-btn-delete {
+    -fx-background-color: linear-gradient(to bottom, #e53935, #b71c1c);
+    -fx-border-color: #ef9a9a #7f0000 #7f0000 #ef9a9a;
+    -fx-text-fill: #ffffff;
+}
+
+.retro-btn-delete:hover {
+    -fx-background-color: linear-gradient(to bottom, #ef5350, #c62828);
+}
+
+.retro-btn-clear {
+    -fx-background-color: linear-gradient(to bottom, #00bcd4, #00838f);
+    -fx-border-color: #80deea #004d40 #004d40 #80deea;
+    -fx-text-fill: #ffffff;
+}
+
+#btnUpdate {
+    -fx-background-color: linear-gradient(to bottom, #ffca28, #f57f17);
+    -fx-border-color: #ffe082 #bf360c #bf360c #ffe082;
+    -fx-text-fill: #212121;
+}
+
+/* --- TABELA RETRO --- */
+.retro-table {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-border-color: #7f9db9 #ffffff #ffffff #7f9db9;
+    -fx-border-width: 2px;
+}
+
+.retro-table .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #fff59d, #fbc02d);
+}
+
+.retro-table .column-header {
+    -fx-border-color: #ffffff #f57f17 #f57f17 #ffffff;
+    -fx-border-width: 2px;
+}
+
+.retro-table .column-header .label {
+    -fx-text-fill: #bf360c;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+.retro-table .table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #fff9c4;
+}
+
+.retro-table .table-row-cell:odd {
+    -fx-background-color: #e1f5fe;
+}
+
+.retro-table .table-row-cell:hover {
+    -fx-background-color: #fff59d;
+}
+
+.retro-table .table-row-cell:selected {
+    -fx-background-color: #0288d1;
+}
+
+.retro-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.retro-table .table-cell {
+    -fx-text-fill: #263238;
+    -fx-font-size: 11px;
+}
+
+/* --- MINI-GAME DA FENDA & PISTA DE AREIA --- */
+.game-panel {
+    -fx-background-color: rgba(255, 248, 225, 0.95);
+    -fx-border-color: #f57f17 #ffffff #ffffff #f57f17;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.25), 4, 0, 0, -2);
+}
+
+.game-title {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #bf360c;
+}
+
+.game-status-text {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #01579b;
+}
+
+.sand-track {
+    -fx-background-image: url('images/textgura_areia_bob_esponja.jpg');
+    -fx-background-size: cover;
+    -fx-background-repeat: repeat-x;
+    -fx-border-color: #8d6e63 #d7ccc8 #d7ccc8 #8d6e63;
+    -fx-border-width: 2px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+
+.retro-btn-game {
+    -fx-background-color: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+    -fx-border-color: #ffffff #e65100 #e65100 #ffffff;
+    -fx-border-width: 2px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #bf360c;
+    -fx-padding: 3 8 3 8;
+    -fx-cursor: hand;
+}
+
+.retro-btn-game:hover {
+    -fx-background-color: linear-gradient(to bottom, #fff59d, #ffd54f);
+}
+
+/* --- STATUS BAR ANOS 2000 --- */
+.retro-status-bar {
+    -fx-background-color: #dcdcdc;
+    -fx-border-color: #ffffff #808080 #808080 #ffffff;
+    -fx-border-width: 2px;
+}
+
+.status-bar-text {
+    -fx-font-size: 11px;
+    -fx-text-fill: #333333;
+    -fx-font-family: 'Tahoma', 'Trebuchet MS', sans-serif;
+}
+
+.status-bar-separator {
+    -fx-font-size: 11px;
+    -fx-text-fill: #999999;
+}
+
+/* --- DIALOGOS E ALERTAS RETRO --- */
+.dialog-pane {
+    -fx-background-color: #fffde7;
+    -fx-border-color: #fbc02d #e65100 #e65100 #fbc02d;
+    -fx-border-width: 4px;
+    -fx-font-family: 'Comic Sans MS', 'Chalkboard', sans-serif;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: linear-gradient(to right, #0288d1, #29b6f6);
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .content .label {
+    -fx-text-fill: #3e2723;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .button-bar .button {
+    -fx-background-color: linear-gradient(to bottom, #ffeb3b, #fbc02d);
+    -fx-border-color: #ffffff #f57f17 #f57f17 #ffffff;
+    -fx-border-width: 2px;
+    -fx-text-fill: #bf360c;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}

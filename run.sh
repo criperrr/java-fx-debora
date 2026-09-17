@@ -6,6 +6,44 @@ SRC="$SCRIPT_DIR/src/java"
 OUT="$SCRIPT_DIR/out"
 LIB="$SCRIPT_DIR/lib"
 
+# Na branch bob-esponja, o modo temático roda por padrão
+BOB_ESPONJA=true
+for arg in "$@"; do
+    if [ "$arg" = "--padrao" ] || [ "$arg" = "--standard" ]; then
+        BOB_ESPONJA=false
+    fi
+done
+
+# Funcao de efeitos sonoros no script de build
+play_sound() {
+    local sound_file="$1"
+    local sound_path="$SCRIPT_DIR/src/resources/com/template/spongebob/sounds/$sound_file"
+    if [ ! -f "$sound_path" ]; then
+        sound_path="$HOME/Downloads/$sound_file"
+    fi
+    if [ -f "$sound_path" ] && command -v afplay >/dev/null 2>&1; then
+        afplay "$sound_path" &
+    fi
+}
+
+# Tratamento de erro na build caso falhe
+handle_build_error() {
+    if [ "$BOB_ESPONJA" = true ]; then
+        echo ""
+        echo "💥 Falha na montagem do Siri Cascudo!"
+        play_sound "spongebob-fail.mp3"
+    fi
+}
+trap handle_build_error ERR
+
+if [ "$BOB_ESPONJA" = true ]; then
+    echo "======================================================="
+    echo "🍍 [SIRI CASCUDO 2000] MODO BOB ESPONJA ATIVADO! 🍍"
+    echo "🌊 Iniciando compilação no fundo do mar..."
+    echo "======================================================="
+    play_sound "sponge-stank-noise.mp3"
+fi
+
 # Diretorio de recursos (suporte a resources ou rescources)
 if [ -d "$SCRIPT_DIR/src/resources" ]; then
     RES="$SCRIPT_DIR/src/resources"
@@ -15,7 +53,7 @@ else
     RES=""
 fi
 
-# Detecta JAVA e JAVAC (prioriza Java 26 compativel com JavaFX 26)
+# Detecta JAVA e JAVAC (prioriza Java 26 compativel com JavaFX 26 ou Java atual)
 if [ -x "/usr/libexec/java_home" ]; then
     JVM_PATH="$(/usr/libexec/java_home -v 26 2>/dev/null || /usr/libexec/java_home 2>/dev/null)"
     if [ -n "$JVM_PATH" ] && [ -x "$JVM_PATH/bin/javac" ]; then
@@ -100,6 +138,9 @@ echo "Java:       $JAVA"
 echo "Javac:      $JAVAC"
 echo "JavaFX Lib: $JAVAFX_LIB"
 echo "Postgres:   $PG_JAR"
+if [ "$BOB_ESPONJA" = true ]; then
+    echo "Tema:       Bob Esponja (Anos 2000)"
+fi
 echo ""
 
 # Classpath com todos os jars
@@ -117,18 +158,32 @@ fi
 # Compila todos os .java
 $JAVAC \
     --module-path "$JAVAFX_LIB" \
-    --add-modules javafx.controls,javafx.fxml \
+    --add-modules javafx.controls,javafx.fxml,javafx.media \
     -cp "$CLASSPATH" \
     -d "$OUT" \
     $(find "$SRC" -name "*.java")
 
 echo "compilado com sucesso"
+
+if [ "$BOB_ESPONJA" = true ]; then
+    play_sound "gary_meow.mp3"
+fi
+
 echo ""
 echo "=== executando ==="
 
-$JAVA \
-    --module-path "$JAVAFX_LIB" \
-    --add-modules javafx.controls,javafx.fxml \
-    --enable-native-access=javafx.graphics \
-    -cp "$OUT:$CLASSPATH" \
-    com.template.Main
+if [ "$BOB_ESPONJA" = true ]; then
+    $JAVA \
+        --module-path "$JAVAFX_LIB" \
+        --add-modules javafx.controls,javafx.fxml,javafx.media \
+        --enable-native-access=javafx.graphics,javafx.media \
+        -cp "$OUT:$CLASSPATH" \
+        com.template.Main --bob-esponja "$@"
+else
+    $JAVA \
+        --module-path "$JAVAFX_LIB" \
+        --add-modules javafx.controls,javafx.fxml,javafx.media \
+        --enable-native-access=javafx.graphics,javafx.media \
+        -cp "$OUT:$CLASSPATH" \
+        com.template.Main "$@"
+fi
