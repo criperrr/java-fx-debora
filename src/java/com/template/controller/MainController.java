@@ -1,9 +1,12 @@
 package com.template.controller;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
+import javafx.animation.KeyFrame;
 import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -29,11 +32,14 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import com.template.model.EmpireState;
+import com.template.model.dao.DatabaseConnection;
 import com.template.model.dto.ShopItemDTO;
 import com.template.service.ShopItemService;
 import com.template.util.AlertUtil;
 import com.template.util.AssistantTerminal;
 import com.template.util.FormatUtil;
+import com.template.util.SkillsDialog;
 import com.template.util.SoundManager;
 import com.template.util.ThemeContext;
 import com.template.validation.ValidationException;
@@ -62,7 +68,11 @@ public class MainController {
     @FXML private TableColumn<ShopItemDTO, String> colRarity;
     @FXML private TableColumn<ShopItemDTO, String> colPrice;
 
-    // Componentes interativos do Bob Esponja e Gary (Mini-Game)
+    // Componentes interativos do Bob Esponja e Gary (Mini-Game & Tycoon HUD)
+    @FXML private Pane overlayPane;
+    @FXML private Label lblClock;
+    @FXML private Label lblCoins;
+    @FXML private Label lblCps;
     @FXML private ImageView imgGary;
     @FXML private ImageView imgBob;
     @FXML private ImageView imgSquidward;
@@ -85,6 +95,10 @@ public class MainController {
     private boolean garyAutoWalk = true;
     private AnimationTimer gameLoop;
 
+    private Timeline tycoonTimeline;
+    private int gameHours = 9;
+    private int gameMinutes = 0;
+
     private int squidwardClickCount = 0;
     private int patriciaClickCount = 0;
 
@@ -103,6 +117,7 @@ public class MainController {
         setupSelectionListener();
         setupSpongeBobExtras();
         loadItems();
+        setupTycoonLoop();
     }
 
     private void setupTableColumns() {
@@ -250,8 +265,24 @@ public class MainController {
                 imgBob.setTranslateX(event.getSceneX() - bobDragDeltaX);
                 imgBob.setTranslateY(event.getSceneY() - bobDragDeltaY);
                 SoundManager.playWalkThrottled();
-                if (lblGameStatus != null) {
-                    lblGameStatus.setText("🍍 Bob Esponja passeando livremente pela tela!");
+
+                if (imgGary != null) {
+                    double bobX = imgBob.getLayoutX() + imgBob.getTranslateX();
+                    double bobY = imgBob.getLayoutY() + imgBob.getTranslateY();
+                    double garyX = imgGary.getLayoutX() + imgGary.getTranslateX();
+                    double garyY = imgGary.getLayoutY() + imgGary.getTranslateY();
+                    double dist = Math.hypot(bobX - garyX, bobY - garyY);
+
+                    if (dist < 120) {
+                        if (garySmileImg != null) imgGary.setImage(garySmileImg);
+                        if (lblGameStatus != null) {
+                            lblGameStatus.setText("🍍❤️🐚 Bob Esponja e Gary estão passeando juntos na areia!");
+                        }
+                    } else {
+                        if (lblGameStatus != null) {
+                            lblGameStatus.setText("🍍 Bob Esponja passeando livremente pela tela!");
+                        }
+                    }
                 }
             });
 
@@ -262,12 +293,13 @@ public class MainController {
         gameLoop = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (!garyAutoWalk || gameArea == null || imgGary == null) return;
+                if (!garyAutoWalk || imgGary == null) return;
 
                 double currentX = imgGary.getLayoutX();
-                double maxX = gameArea.getWidth() - imgGary.getFitWidth() - 20;
+                double maxX = (overlayPane != null && overlayPane.getWidth() > 100) ?
+                        overlayPane.getWidth() - 90 : 900;
 
-                if (currentX <= 10) {
+                if (currentX <= 15) {
                     garyVelocityX = Math.abs(garyVelocityX);
                     imgGary.setScaleX(-1);
                 } else if (currentX >= maxX) {
@@ -575,6 +607,9 @@ public class MainController {
                 "selecione um item na tabela para excluir");
         } else {
             // O som de tremor (shiver) toca exatamente ao abrir esta janela com item selecionado
+            if (ThemeContext.isBobEsponja()) {
+                SoundManager.play(SoundManager.SHIVER);
+            }
             boolean confirmed = AlertUtil.showConfirmation(
                 ThemeContext.isBobEsponja() ? "Confirmar Demolição / Exclusão" : "confirmar exclusao",
                 ThemeContext.isBobEsponja() ?
@@ -593,6 +628,7 @@ public class MainController {
                     }
                     onClear(null);
                     loadItems();
+                    updateHud();
                 } catch (Exception e) {
                     AlertUtil.showError("erro ao excluir: " + e.getMessage());
                 }
@@ -620,8 +656,166 @@ public class MainController {
     private void loadItems() {
         try {
             masterData.setAll(itemService.getAllItems());
+            updateHud();
         } catch (Exception e) {
             AlertUtil.showError("erro ao carregar dados: " + e.getMessage());
+        }
+    }
+
+    // ==========================================
+    // TYCOON & ACTIVE MINI-GAME DO SIRI CASCUDO
+    // ==========================================
+
+    @FXML
+    void onGrillBurger(ActionEvent event) {
+        if (!ThemeContext.isBobEsponja()) return;
+
+        EmpireState.incrementBurgersCooked();
+        long gain = 10;
+        if (EmpireState.hasConnectionPool()) gain *= 2;
+        if (EmpireState.hasFirewallPlankton()) gain = (long) (gain * 1.5);
+        if (EmpireState.hasBtreeIndex()) gain += 5;
+
+        EmpireState.addCoins(gain);
+        updateHud();
+
+        SoundManager.play(SoundManager.GARY_MEOW);
+        if (lblGameStatus != null) {
+            lblGameStatus.setText("🔥 Hambúrguer de Siri Deluxe grelhado no ponto! +" + gain + " 🐚!");
+        }
+
+        // Pulo animado do Bob Esponja ao fritar
+        if (imgBob != null) {
+            ScaleTransition st = new ScaleTransition(Duration.millis(150), imgBob);
+            st.setFromX(1.0);
+            st.setFromY(1.0);
+            st.setToX(1.3);
+            st.setToY(1.3);
+            st.setCycleCount(2);
+            st.setAutoReverse(true);
+            st.play();
+        }
+
+        spawnFloatingCoinText("+" + gain + " 🐚");
+    }
+
+    @FXML
+    void onOpenSkills(ActionEvent event) {
+        Stage stage = (Stage) tableItems.getScene().getWindow();
+        SkillsDialog.show(stage, this::updateHud);
+    }
+
+    @FXML
+    void onResetGame(ActionEvent event) {
+        boolean confirmed = AlertUtil.showConfirmation(
+            "💥 Resetar Restaurante e Banco de Dados",
+            "ATENÇÃO: Deseja realmente zerar o banco de dados PostgreSQL e o progresso das Conchas?\n" +
+            "Todas as mercadorias cadastradas e habilidades serão reiniciadas!"
+        );
+        if (confirmed) {
+            try {
+                DatabaseConnection.resetSpongeBobDatabase();
+                EmpireState.reset();
+                onClear(null);
+                loadItems();
+                updateHud();
+                SoundManager.play(SoundManager.STANK_NOISE);
+                if (lblGameStatus != null) {
+                    lblGameStatus.setText("💥 Jogo resetado! Banco PostgreSQL zerado e conchas reiniciadas.");
+                }
+            } catch (Exception e) {
+                AlertUtil.showError("Erro ao resetar jogo: " + e.getMessage());
+            }
+        }
+    }
+
+    private void spawnFloatingCoinText(String text) {
+        if (overlayPane == null) return;
+        Label floatLabel = new Label(text);
+        floatLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ffd700; " +
+                            "-fx-effect: dropshadow(gaussian, #b71c1c, 4, 0.8, 1, 1);");
+        double startX = (imgBob != null) ? imgBob.getLayoutX() + imgBob.getTranslateX() - 30 : 500;
+        double startY = (imgBob != null) ? imgBob.getLayoutY() + imgBob.getTranslateY() + 40 : 100;
+        floatLabel.setLayoutX(Math.max(50, Math.min(startX, 900)));
+        floatLabel.setLayoutY(Math.max(50, startY));
+        floatLabel.setMouseTransparent(true);
+
+        overlayPane.getChildren().add(floatLabel);
+
+        TranslateTransition tt = new TranslateTransition(Duration.millis(900), floatLabel);
+        tt.setByY(-45);
+        FadeTransition ft = new FadeTransition(Duration.millis(900), floatLabel);
+        ft.setFromValue(1.0);
+        ft.setToValue(0.0);
+        ft.setOnFinished(e -> overlayPane.getChildren().remove(floatLabel));
+
+        tt.play();
+        ft.play();
+    }
+
+    private void setupTycoonLoop() {
+        if (!ThemeContext.isBobEsponja()) return;
+
+        updateHud();
+
+        tycoonTimeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+            // Avança relógio do jogo
+            gameMinutes += 10;
+            if (gameMinutes >= 60) {
+                gameMinutes = 0;
+                gameHours++;
+                if (gameHours >= 22) {
+                    gameHours = 8; // Novo expediente
+                }
+            }
+
+            int itemCount = masterData.size();
+            long passive = itemCount * 2L;
+
+            if (EmpireState.hasBtreeIndex()) {
+                passive = (long) (passive * 1.4);
+            }
+            if (EmpireState.hasConnectionPool()) {
+                passive *= 2;
+            }
+            if (EmpireState.hasAutoVacuum()) {
+                passive += 5;
+                EmpireState.incrementBurgersCooked();
+            }
+            if (EmpireState.hasFirewallPlankton()) {
+                passive = (long) (passive * 1.5);
+            }
+
+            if (passive > 0) {
+                EmpireState.addCoins(passive);
+            }
+
+            updateHud();
+        }));
+        tycoonTimeline.setCycleCount(Timeline.INDEFINITE);
+        tycoonTimeline.play();
+    }
+
+    private void updateHud() {
+        if (!ThemeContext.isBobEsponja()) return;
+
+        int itemCount = masterData.size();
+        long passive = itemCount * 2L;
+        if (EmpireState.hasBtreeIndex()) passive = (long) (passive * 1.4);
+        if (EmpireState.hasConnectionPool()) passive *= 2;
+        if (EmpireState.hasAutoVacuum()) passive += 5;
+        if (EmpireState.hasFirewallPlankton()) passive = (long) (passive * 1.5);
+
+        if (lblClock != null) {
+            String period = (gameHours >= 12) ? "PM" : "AM";
+            int displayHour = (gameHours > 12) ? gameHours - 12 : (gameHours == 0 ? 12 : gameHours);
+            lblClock.setText(String.format("⏰ %02d:%02d %s", displayHour, gameMinutes, period));
+        }
+        if (lblCoins != null) {
+            lblCoins.setText("🐚 " + EmpireState.getCoins() + " Conchas");
+        }
+        if (lblCps != null) {
+            lblCps.setText("+" + passive + "/s");
         }
     }
 }

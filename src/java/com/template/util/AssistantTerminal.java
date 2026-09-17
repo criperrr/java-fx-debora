@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+import com.template.model.EmpireState;
 import com.template.model.dto.ShopItemDTO;
 
 /**
@@ -164,8 +165,15 @@ public class AssistantTerminal {
             if (onRegisterCallback != null) {
                 onRegisterCallback.accept(req.itemToRegister);
             }
+            long reward = 50;
+            if (EmpireState.hasConnectionPool()) reward *= 2;
+            if (EmpireState.hasFirewallPlankton()) reward = (long)(reward * 1.5);
+            EmpireState.addCoins(reward);
+            EmpireState.incrementOrdersFulfilled();
             SoundManager.play(req.soundEffect);
-            AlertUtil.showInfo("Demanda de " + req.clientName + " processada com sucesso!\nItem '" + req.itemToRegister.getName() + "' cadastrado no PostgreSQL!");
+            AlertUtil.showInfo("Demanda de " + req.clientName + " processada com sucesso!\n" +
+                "Item '" + req.itemToRegister.getName() + "' cadastrado no PostgreSQL!\n" +
+                "💰 Você recebeu +" + reward + " 🐚 Conchas de Ouro pelo atendimento!");
         });
 
         btnClose.setOnAction(e -> stage.close());

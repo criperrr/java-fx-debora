@@ -47,12 +47,8 @@ public class AlertUtil {
 
     /**
      * Exibe uma caixa de diálogo de confirmação com opções OK e Cancelar.
-     * Toca o som de tremor (shiver) quando no modo Bob Esponja.
      */
     public static boolean showConfirmation(String title, String message) {
-        if (ThemeContext.isBobEsponja()) {
-            SoundManager.play(SoundManager.SHIVER);
-        }
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle(title);
         confirm.setHeaderText(null);
