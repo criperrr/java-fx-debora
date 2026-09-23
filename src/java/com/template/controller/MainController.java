@@ -1,11 +1,15 @@
 package com.template.controller;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -14,21 +18,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import com.template.model.dto.ShopItemDTO;
+import com.template.service.IShopItemService;
 import com.template.service.ShopItemService;
 import com.template.util.AlertUtil;
 import com.template.util.FormatUtil;
-import com.template.validation.ValidationException;
+import com.template.validation.IShopItemValidator;
+import com.template.validation.ShopItemValidator;
 
-/**
- * Controller: Gerencia o estado da View e as interações do usuário na interface (UI/Eventos).
- * Service (ShopItemService): Orquestra as regras de negócio e operações de CRUD.
- * Validator (ShopItemValidator): Trata a validação de entrada e integridade dos dados.
- * Util (FormatUtil, AlertUtil): Formata valores e exibe caixas de diálogo/alertas padronizados.
- * DAO (ShopItemDAO): Persistência direta e comunicação com o banco de dados.
- */
-public class MainController {
+// controller cuida so da tela e dos eventos do usuario. nada de enfiar sql ou validacao pesada aqui dentro.
+public class MainController implements Initializable {
 
-    // Componentes visuais gerenciados pelo Controller (responsabilidade da View/UI)
     @FXML private TextField txtId;
     @FXML private TextField txtName;
     @FXML private TextField txtDescription;
@@ -43,16 +42,25 @@ public class MainController {
     @FXML private TableColumn<ShopItemDTO, String> colDescription;
     @FXML private TableColumn<ShopItemDTO, String> colPrice;
 
-    // Regras de negócio e persistência delegadas para a camada de serviço
-    private final ShopItemService itemService;
+    // depende sempre das interfaces pro codigo nao ficar engessado
+    private final IShopItemService itemService;
+    private final IShopItemValidator itemValidator;
+
     private final ObservableList<ShopItemDTO> masterData = FXCollections.observableArrayList();
 
     public MainController() {
-        this(new ShopItemService());
+        this(new ShopItemService(), new ShopItemValidator());
     }
 
-    public MainController(ShopItemService itemService) {
+    // injeta servico e validador prontos pra testar ou trocar depois sem dor de cabeca
+    public MainController(IShopItemService itemService, IShopItemValidator itemValidator) {
         this.itemService = itemService;
+        this.itemValidator = itemValidator;
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        initialize();
     }
 
     @FXML
@@ -69,7 +77,7 @@ public class MainController {
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        // Responsabilidade de formatação de moeda delegada ao FormatUtil
+        // formata moeda na celula sem sujar o objeto original
         colPrice.setCellFactory(tc -> new TableCell<ShopItemDTO, String>() {
             @Override
             protected void updateItem(String price, boolean empty) {
@@ -123,19 +131,32 @@ public class MainController {
 
     @FXML
     void onSave(ActionEvent event) {
+        // se os dados de entrada sao lixo, aborta logo antes de mexer com banco
+        if (!itemValidator.validarItem(txtName.getText(), txtPrice.getText())) {
+            return;
+        }
+
+        // validou certinho, empacota no dto e despacha pro servico se virar
         try {
-            // Regras de negócio, validação e persistência delegadas para ShopItemService
-            itemService.saveItem(
-                txtId.getText(),
-                txtName.getText(),
-                txtDescription.getText(),
-                txtPrice.getText()
-            );
-            onClear(null);
-            loadItems();
-        } catch (ValidationException e) {
-            // Tratado pelo validador e capturado aqui
-            AlertUtil.showError(e.getMessage());
+            String idStr = txtId.getText();
+            String normalizedPrice = FormatUtil.normalizePrice(txtPrice.getText());
+            String name = txtName.getText() != null ? txtName.getText().trim() : "";
+            String desc = txtDescription.getText() != null ? txtDescription.getText().trim() : "";
+
+            if (idStr != null && !idStr.trim().isEmpty()) {
+                int id = Integer.parseInt(idStr.trim());
+                ShopItemDTO objItem = new ShopItemDTO(id, name, desc, normalizedPrice);
+                itemService.atualizarItem(objItem);
+                onClear(null);
+                loadItems();
+                AlertUtil.showInformation("Item atualizado com sucesso!");
+            } else {
+                ShopItemDTO objItem = new ShopItemDTO(name, desc, normalizedPrice);
+                itemService.cadastrarItem(objItem);
+                onClear(null);
+                loadItems();
+                AlertUtil.showInformation("Item cadastrado com sucesso!");
+            }
         } catch (Exception e) {
             AlertUtil.showError("erro ao salvar: " + e.getMessage());
         }
@@ -146,27 +167,28 @@ public class MainController {
         ShopItemDTO selected = tableItems.getSelectionModel().getSelectedItem();
         if (selected == null) {
             AlertUtil.showWarning("selecione um item na tabela para excluir");
-        } else {
-            boolean confirmed = AlertUtil.showConfirmation(
-                "confirmar exclusao",
-                "excluir \"" + selected.getName() + "\"?"
-            );
+            return;
+        }
 
-            if (confirmed) {
-                try {
-                    itemService.deleteItem(selected.getId());
-                    onClear(null);
-                    loadItems();
-                } catch (Exception e) {
-                    AlertUtil.showError("erro ao excluir: " + e.getMessage());
-                }
+        boolean confirmed = AlertUtil.showConfirmation(
+            "confirmar exclusao",
+            "excluir \"" + selected.getName() + "\"?"
+        );
+
+        if (confirmed) {
+            try {
+                itemService.deletarItem(selected.getId());
+                onClear(null);
+                loadItems();
+                AlertUtil.showInformation("Item excluído com sucesso!");
+            } catch (Exception e) {
+                AlertUtil.showError("erro ao excluir: " + e.getMessage());
             }
         }
     }
 
     @FXML
     void onClear(ActionEvent event) {
-        // Limpa os campos do formulário e redefine o estado visual
         txtId.clear();
         txtName.clear();
         txtDescription.clear();
@@ -179,9 +201,29 @@ public class MainController {
 
     private void loadItems() {
         try {
-            masterData.setAll(itemService.getAllItems());
+            masterData.setAll(itemService.listarItens());
         } catch (Exception e) {
             AlertUtil.showError("erro ao carregar dados: " + e.getMessage());
         }
+    }
+
+    public void limparCampos() {
+        onClear(null);
+    }
+
+    public void listarItens() {
+        loadItems();
+    }
+
+    public void btnCadastrarAction(ActionEvent event) {
+        onSave(event);
+    }
+
+    public void btnAtualizarAction(ActionEvent event) {
+        onSave(event);
+    }
+
+    public void btnExcluirAction(ActionEvent event) {
+        onDelete(event);
     }
 }

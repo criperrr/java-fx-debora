@@ -1,54 +1,59 @@
 package com.template.validation;
 
-import com.template.model.dto.ShopItemDTO;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Validador para a entidade ShopItemDTO, orquestrando as validações de nome e preço.
- */
-public class ShopItemValidator implements Validator<ShopItemDTO> {
+import com.template.util.AlertUtil;
 
-    private static final ShopItemValidator DEFAULT_INSTANCE = new ShopItemValidator();
+// junta os validadores menores em fila e para no primeiro que chiar
+public class ShopItemValidator implements IShopItemValidator {
 
-    private final Validator<String> nameValidator;
-    private final Validator<String> priceValidator;
+    @Override
+    public boolean validarItem(String nome, String preco) {
+        // bota as regras que precisa checar numa lista e itera
+        List<Validador<String>> validadores = new ArrayList<>();
 
-    public ShopItemValidator() {
-        this(new RequiredFieldValidator("nome"), new PriceValidator());
-    }
+        validadores.add(new CampoObrigatorioValidador("Nome", nome));
+        validadores.add(new CampoObrigatorioValidador("Preço", preco));
+        validadores.add(new PrecoValidador(preco));
 
-    public ShopItemValidator(Validator<String> nameValidator, Validator<String> priceValidator) {
-        this.nameValidator = nameValidator;
-        this.priceValidator = priceValidator;
+        // roda cada validador; deu ruim em um, avisa na tela e cai fora
+        for (Validador<String> validador : validadores) {
+            if (!validador.validar(validador.getValor())) {
+                AlertUtil.showWarning(validador.getMensagemErro());
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
-    public void validate(ShopItemDTO item) throws ValidationException {
-        if (item == null) {
-            throw new ValidationException("item nao pode ser nulo");
+    public boolean validarItem(String nome, String preco, String descricao) {
+        return validarItem(nome, preco);
+    }
+
+    @Override
+    public boolean validarNome(String nome) {
+        Validador<String> validador = new CampoObrigatorioValidador("Nome", nome);
+        if (!validador.validar(validador.getValor())) {
+            AlertUtil.showWarning(validador.getMensagemErro());
+            return false;
         }
-        validate(item.getName(), item.getPrice());
+        return true;
     }
 
-    /**
-     * Valida os campos individuais de um item da loja.
-     *
-     * @param name     Nome do item.
-     * @param priceStr Representação textual do preço.
-     * @throws ValidationException Caso algum dos campos seja inválido.
-     */
-    public void validate(String name, String priceStr) throws ValidationException {
-        nameValidator.validate(name);
-        priceValidator.validate(priceStr);
-    }
+    @Override
+    public boolean validarPreco(String preco) {
+        List<Validador<String>> validadores = new ArrayList<>();
+        validadores.add(new CampoObrigatorioValidador("Preço", preco));
+        validadores.add(new PrecoValidador(preco));
 
-    /**
-     * Método utilitário estático para validação direta de campos.
-     *
-     * @param name     Nome do item.
-     * @param priceStr Representação textual do preço.
-     * @throws ValidationException Caso algum dos campos seja inválido.
-     */
-    public static void validateFields(String name, String priceStr) throws ValidationException {
-        DEFAULT_INSTANCE.validate(name, priceStr);
+        for (Validador<String> validador : validadores) {
+            if (!validador.validar(validador.getValor())) {
+                AlertUtil.showWarning(validador.getMensagemErro());
+                return false;
+            }
+        }
+        return true;
     }
 }

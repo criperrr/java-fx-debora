@@ -12,7 +12,7 @@ import com.template.model.dto.ShopItemDTO;
 /**
  * Objeto de acesso a dados (DAO) para operações de persistência da entidade ShopItem.
  */
-public class ShopItemDAO {
+public class ShopItemDAO implements IShopItemDAO {
 
     /**
      * Insere um novo item na base de dados.

@@ -41,6 +41,11 @@ public class AlertUtil {
         showAlert(Alert.AlertType.INFORMATION, "Informação", message);
     }
 
+    // atalho simples pra disparar alerta informativo
+    public static void showInformation(String message) {
+        showInfo(message);
+    }
+
     /**
      * Exibe uma caixa de diálogo de confirmação com opções OK e Cancelar.
      *
@@ -55,17 +60,25 @@ public class AlertUtil {
         confirm.setContentText(message);
         applyDarkTheme(confirm);
 
-        Optional<ButtonType> result = confirm.showAndWait();
-        return result.isPresent() && result.get() == ButtonType.OK;
+        try {
+            Optional<ButtonType> result = confirm.showAndWait();
+            return result.isPresent() && result.get() == ButtonType.OK;
+        } catch (Throwable t) {
+            return false;
+        }
     }
 
     private static void showAlert(Alert.AlertType type, String title, String msg) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        applyDarkTheme(alert);
-        alert.showAndWait();
+        try {
+            Alert alert = new Alert(type);
+            alert.setTitle(title);
+            alert.setHeaderText(null);
+            alert.setContentText(msg);
+            applyDarkTheme(alert);
+            alert.showAndWait();
+        } catch (Throwable t) {
+            System.err.println("[" + title + "] " + msg);
+        }
     }
 
     private static void applyDarkTheme(Alert alert) {

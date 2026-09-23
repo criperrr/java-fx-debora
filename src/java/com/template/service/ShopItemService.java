@@ -2,71 +2,65 @@ package com.template.service;
 
 import java.util.List;
 
+import com.template.model.dao.IShopItemDAO;
 import com.template.model.dao.ShopItemDAO;
 import com.template.model.dto.ShopItemDTO;
 import com.template.util.FormatUtil;
-import com.template.validation.ShopItemValidator;
 
-/**
- * Camada de serviço responsável por orquestrar a lógica de negócio,
- * validações e comunicação com o DAO.
- */
-public class ShopItemService {
+// orquestra as regras do item e delega o banco pro dao
+public class ShopItemService implements IShopItemService {
 
-    private final ShopItemDAO itemDAO;
-    private final ShopItemValidator itemValidator;
+    private final IShopItemDAO itemDAO;
 
     public ShopItemService() {
-        this(new ShopItemDAO(), new ShopItemValidator());
+        this(new ShopItemDAO());
     }
 
-    public ShopItemService(ShopItemDAO itemDAO) {
-        this(itemDAO, new ShopItemValidator());
-    }
-
-    public ShopItemService(ShopItemDAO itemDAO, ShopItemValidator itemValidator) {
+    public ShopItemService(IShopItemDAO itemDAO) {
         this.itemDAO = itemDAO;
-        this.itemValidator = itemValidator;
     }
 
-    /**
-     * Retorna todos os itens cadastrados no banco de dados.
-     *
-     * @return Lista com todos os ShopItemDTO.
-     */
-    public List<ShopItemDTO> getAllItems() {
+    @Override
+    public void cadastrarItem(ShopItemDTO item) {
+        itemDAO.createShopItem(item);
+    }
+
+    @Override
+    public void atualizarItem(ShopItemDTO item) {
+        itemDAO.updateShopItem(item);
+    }
+
+    @Override
+    public void deletarItem(int id) {
+        itemDAO.deleteShopItem(id);
+    }
+
+    @Override
+    public List<ShopItemDTO> listarItens() {
         return itemDAO.getAllShopItems();
     }
 
-    /**
-     * Valida e salva ou atualiza um item na base de dados.
-     *
-     * @param idStr       ID do item (vazio ou nulo para novo cadastro).
-     * @param name        Nome do item.
-     * @param description Descrição do item.
-     * @param priceStr    Preço em formato de texto.
-     */
-    public void saveItem(String idStr, String name, String description, String priceStr) {
-        itemValidator.validate(name, priceStr);
+    @Override
+    public List<ShopItemDTO> getAllItems() {
+        return listarItens();
+    }
 
+    @Override
+    public void saveItem(String idStr, String name, String description, String priceStr) {
         String normalizedPrice = FormatUtil.normalizePrice(priceStr);
         String trimmedName = name != null ? name.trim() : "";
         String trimmedDesc = description != null ? description.trim() : "";
 
         if (idStr != null && !idStr.trim().isEmpty()) {
             int id = Integer.parseInt(idStr.trim());
-            itemDAO.updateShopItem(new ShopItemDTO(id, trimmedName, trimmedDesc, normalizedPrice));
+            atualizarItem(new ShopItemDTO(id, trimmedName, trimmedDesc, normalizedPrice));
         } else {
-            itemDAO.createShopItem(new ShopItemDTO(trimmedName, trimmedDesc, normalizedPrice));
+            cadastrarItem(new ShopItemDTO(trimmedName, trimmedDesc, normalizedPrice));
         }
     }
 
-    /**
-     * Remove um item da base de dados pelo seu ID.
-     *
-     * @param id Identificador do item a ser excluído.
-     */
+    @Override
     public void deleteItem(int id) {
-        itemDAO.deleteShopItem(id);
+        deletarItem(id);
     }
 }

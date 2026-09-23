@@ -25,15 +25,19 @@ if [ -x "/usr/libexec/java_home" ]; then
 fi
 
 if [ -z "$JAVAC" ]; then
-    if [ -x "/usr/lib/jvm/java-26-openjdk/bin/javac" ]; then
-        JAVAC="/usr/lib/jvm/java-26-openjdk/bin/javac"
-        JAVA="/usr/lib/jvm/java-26-openjdk/bin/java"
-    elif [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/javac" ]; then
+    for jvm in /usr/lib/jvm/java-27-openjdk /usr/lib/jvm/java-26-openjdk /usr/lib/jvm/java-21-openjdk /usr/lib/jvm/java-*-openjdk /usr/lib/jvm/default-java; do
+        if [ -x "$jvm/bin/javac" ]; then
+            JAVAC="$jvm/bin/javac"
+            JAVA="$jvm/bin/java"
+            break
+        fi
+    done
+fi
+
+if [ -z "$JAVAC" ]; then
+    if [ -n "$JAVA_HOME" ] && [ -x "$JAVA_HOME/bin/javac" ]; then
         JAVAC="$JAVA_HOME/bin/javac"
         JAVA="$JAVA_HOME/bin/java"
-    elif [ -x "/usr/lib/jvm/default-java/bin/javac" ]; then
-        JAVAC="/usr/lib/jvm/default-java/bin/javac"
-        JAVA="/usr/lib/jvm/default-java/bin/java"
     else
         JAVAC="$(command -v javac || true)"
         JAVA="$(command -v java || true)"
@@ -53,9 +57,9 @@ fi
 # Localiza JavaFX SDK
 JAVAFX_LIB=""
 POSSIBLE_FX_PATHS=(
-    "$LIB/javafx-sdk"
     "$LIB/javafx-sdk/lib"
     $(ls -d "$LIB"/javafx-sdk*/lib 2>/dev/null || true)
+    "$LIB/javafx-sdk"
     $(ls -d "$HOME"/Documents/javafx-sdk*/lib 2>/dev/null || true)
     $(ls -d "$HOME"/Downloads/javafx-sdk*/lib 2>/dev/null || true)
     "/usr/share/openjfx/lib"
@@ -64,8 +68,13 @@ POSSIBLE_FX_PATHS=(
 
 for path in "${POSSIBLE_FX_PATHS[@]}"; do
     if [ -n "$path" ] && [ -d "$path" ]; then
-        JAVAFX_LIB="$path"
-        break
+        if ls "$path"/*.jar >/dev/null 2>&1; then
+            JAVAFX_LIB="$path"
+            break
+        elif [ -d "$path/lib" ] && ls "$path/lib"/*.jar >/dev/null 2>&1; then
+            JAVAFX_LIB="$path/lib"
+            break
+        fi
     fi
 done
 
